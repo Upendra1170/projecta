@@ -1,0 +1,56 @@
+- name: catalogue
+  host: catalogue
+  become: yes
+  tasks:
+  - name: diable old nodejs and enable nodejs:18
+     system.builtin.shell: dnf module diable nodejs -y ; dnf module enable nodejs -y
+#shell is like you logged in inside target mavhine directly and running command
+  - name: install nodejs
+    system.builtin.package:
+      name: nodejs
+      state: present
+
+  - name: user
+    system.builtin.user:
+     name: roboshop
+
+  - name: create app dir
+    system.builtin.file:
+      path: /app
+      state: directory
+
+  - name: download catalogue application
+    system.builtin.get_url:
+    name: roboshop
+    url: https://roboshop.s3.amazonaws.com/catalogue.zip
+    dest: /temp
+   
+  - name: extract the catalogue application
+    system.builtin.unarchieve:
+    src: /temp/catalogue.zip
+    dest: /app
+    remote_src: yes
+
+  - name: install depencies
+    ansible.builtin.command: npm install
+    args:
+    chdir: /app
+
+  - name: copy catalogueservice 
+    system.builtin.copy:
+       src: catalogue.service
+       dest: /etc/systemd/system/catalogue.service 
+
+  - name: demon reload and start
+    system.builtin.systemd_service:
+      demon_reload: true
+
+  - name: copy mangodb repo
+    ansible.builtin.copy:
+      src: mangodb repo 
+      dest: /etc/yum.repos.d/mongdb.repo  
+
+  - name: install mangodb client
+    ansible.builtin.package:
+      name: mongodb-org-shell
+      state: present    

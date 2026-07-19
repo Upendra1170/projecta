@@ -28,3 +28,11 @@
     ansible.builtin.service:
       name: mongod
       state: restarted  
+      remote_src: yes
+
+  - name:  install depencies
+    ansible.builtin.command: npm install
+    args:
+    chdir: /app
+
+    
