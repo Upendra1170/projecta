@@ -57,8 +57,12 @@
 
   - name: get the catagories count
     system.builtin.command: mangodb
+    getsiblingD("catalogue"); db.products.count()'
     register: product_count
 
   - name: print the count
     system.builtin.debug:
-       msg: "product_count: {{product_count}}"  
+       msg: "product_count: {{product_count}}"
+
+  - name: load catalogue data
+    ansible.builtin.command: mongo---host
