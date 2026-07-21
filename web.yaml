@@ -38,3 +38,15 @@
     name: nginx
     state: started
     enable: yes   
+
+- name: allow remote connections
+  ansible.builtin.replace:
+      path: /etc/redis/redis.conf
+      regexp: '34.228.70.82'
+      replace: '0.0.0.0'   
+
+- name: start and enable redis
+  ansible.builtin.service:
+    name: redis
+    state: restarted
+    enable: yes    
