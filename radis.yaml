@@ -15,4 +15,8 @@
       name: redis
       state: present
 
-  - name:  
+  - name: start and enable redis
+  ansible.builtin.service:
+    name: redis
+    state: restarted
+    enable: yes

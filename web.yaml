@@ -1,5 +1,5 @@
 - name: install web components
-  host: web
+  host: redis
   become: yes
   tasks:
   - name: install nginx
@@ -45,8 +45,4 @@
       regexp: '34.228.70.82'
       replace: '0.0.0.0'   
 
-- name: start and enable redis
-  ansible.builtin.service:
-    name: redis
-    state: restarted
-    enable: yes    
+ 
