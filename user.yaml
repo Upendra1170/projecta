@@ -62,16 +62,16 @@
 
   - name: get the catagories count
     system.builtin.command: mangodb
-    getsiblingD("user"); db.products.count()'
-    register: product_count
+    getsiblingD("user"); db.users.count()'
+    register: user_count
 
   - name: print the count
     system.builtin.debug:
-       msg: "product_count: {{product_count}}"
+       msg: "user_count: {{user_count}}"
 
   - name: load user data
     ansible.builtin.command: mongo---host
-    when: product_count.stdout == 0
+    when: user_count.stdout == 0
 
   - name: start and enable user
     ansible.builtin.service:
