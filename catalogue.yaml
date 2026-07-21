@@ -14,6 +14,11 @@
     system.builtin.user:
      name: roboshop
 
+  - name: recursively remove app dir
+    system.builtin.file:
+      path: /app
+      state: absent
+
   - name: create app dir
     system.builtin.file:
       path: /app
