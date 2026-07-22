@@ -1,0 +1,81 @@
+- name: payment
+  host: payment
+  become: yes
+  tasks:
+  - name: diable old nodejs and enable nodejs:18
+     system.builtin.shell: dnf module diable nodejs -y ; dnf module enable nodejs -y
+#shell is like you logged in inside target mavhine directly and running command
+  - name: install nodejs
+    system.builtin.package:
+      name: nodejs
+      state: present
+
+  - name: user
+    system.builtin.user:
+     name: roboshop
+
+  - name: recursively remove app dir
+    system.builtin.file:
+      path: /app
+      state: absent
+
+  - name: create app dir
+    system.builtin.file:
+      path: /app
+      state: directory
+
+  - name: download payment application
+    system.builtin.get_url:
+    name: roboshop
+    url: https://roboshop.s3.amazonaws.com/payment.zip
+    dest: /temp
+   
+  - name: extract the payment application
+    system.builtin.unarchieve:
+    src: /temp/payment.zip
+    dest: /app
+    remote_src: yes
+
+  - name: install depencies
+    ansible.builtin.command: npm install
+    args:
+    chdir: /app
+
+  - name: copy paymentservice 
+    system.builtin.copy:
+       src: payment.service
+       dest: /etc/systemd/system/payment.service 
+
+  - name: demon reload and start
+    system.builtin.systemd_service:
+      demon_reload: true
+
+  - name: copy mangodb repo
+    ansible.builtin.copy:
+      src: mangodb repo 
+      dest: /etc/yum.repos.d/mongdb.repo  
+
+  - name: install mangodb client
+    ansible.builtin.package:
+      name: mongodb-org-shell
+      state: present    
+
+  - name: get the catagories count
+    system.builtin.command: mangodb
+    getsiblingD("payment"); db.payments.count()'
+    register: payment_count
+
+  - name: print the count
+    system.builtin.debug:
+       msg: "payment_count: {{payment_count}}"
+
+  - name: load payment data
+    ansible.builtin.command: mongo---host
+    when: payment_count.stdout == 0
+
+  - name: start and enable payment
+    ansible.builtin.service:
+      name: payment
+      state: restarted
+      enable: yes
+  
