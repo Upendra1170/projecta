@@ -67,3 +67,7 @@
     ansible.builtin.command: mysql -h mysql-dev.devopsb72.online -uroot -p{{ mysql_password }} < /app/schema/shipping.sql
     register: shipping_schema_status
     failed_when: shipping_schema_status.rc == 1 and "ERROR 1062" not in shipping_schema_status.stderr    
+
+  - name: load cities data
+    ansible.builtin.command: mysql -h mysql-dev.devopsb72.online -uroot -p{{ mysql_password }} < /app/schema/shipping.sql
+    when: shipping_schema_status.rc == 0  
