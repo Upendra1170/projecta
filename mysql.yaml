@@ -1,0 +1,21 @@
+- name: install my sql
+  hosts: mysql
+  become: yes
+  tasks:
+  - name: disable current version of mysql
+    ansibe.builtin.command: dnf module disable mysql -y
+  - name: setup mysql5.7 repo
+    ansibe.builtin.copy:
+      src: mysql.repo
+      dest: /etc/yum.repos.d/mysql.repo
+
+  - name: install mysql
+    ansible.builtin.package:
+      name: mysql-communityserver
+      state: present
+
+  - name: start and enable mysql
+    ansible:builtin.service:
+      name: myssqlid
+      state: started
+      enable: yes
