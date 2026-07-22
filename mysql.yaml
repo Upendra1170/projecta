@@ -19,3 +19,6 @@
       name: myssqlid
       state: started
       enable: yes
+
+  - name: setup root password  
+    ansible.builtin.command: mysql_secure_installation --set--root-pass roboshop@1
